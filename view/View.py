@@ -2,7 +2,8 @@ from tkinter import *
 from PIL import Image, ImageTk  # For resizing images
 from controller.Controller import Controller
 from view.Tile import Tile
-
+from math import isqrt
+from time import sleep
 
 class View():
     
@@ -42,22 +43,57 @@ class View():
         # Generate a grid of tiles with the width of the grid being tiles_for_width tiles
         tiles_for_width = 9
         tile_size = board_size // tiles_for_width
-        tile_grid = self.populateGrid(tiles_for_width, tile_size) # Initialize grid with empty Tiles
+        self.tile_grid = self.populateGrid(tiles_for_width, tile_size) # Initialize grid with empty Tiles
 
 
         # Get a list of resized possible tile images (BLANK and 1-9)
         image_list = self.resizeImages(tile_size)
 
-        
+        """        
         # Testing picture displaying
         for i in range(9):
             for j in range(9):
                 tile_grid[i][j].label['image'] = image_list[i+1]
+        """
+
+        tiles_remaining = tiles_for_width * tiles_for_width
+
+        # Continue this loop until every tile has collapsed
+        while tiles_remaining > 0:
+            # Get tuple containing random Tile object to populate and value to populate with
+            tile_v = controller.randomTileAndValue(self.tile_grid)
+            if tile_v == None:
+                break   # No more uncollapsed Tiles, so the board is filled and the loop can end
+
+            # Mark equivalent Tile in grid as collapsed and assign value to it
+            x = tile_v[0].coord[0]
+            y = tile_v[0].coord[1]
+
+            self.tile_grid[x][y].collapsed = True
+            self.tile_grid[x][y].label['image'] = image_list[tile_v[1]]
+
+            # Propagate the entropy of affected Tiles
+            self.propagateEntropy(self.tile_grid[x][y], tile_v[1], tiles_for_width)
+            tiles_remaining -= 1
 
 
         self.root.mainloop() # Starts/runs the GUI (everything involving the GUI should come before this)
 
     
+    def propagateEntropy(self, tile: Tile, value: int, tiles_for_width: int):
+        """
+        Will change the entropy of Tiles surrounding the given Tile based on
+        the given value.
+        """
+        # Iterate through every Tile in the grid
+        for column in range(tiles_for_width):
+            for row in range(tiles_for_width):
+                curr_tile = self.tile_grid[column][row]
+                if (curr_tile.coord[0] == tile.coord[0]) or (curr_tile.coord[1] == tile.coord[1]) or (curr_tile.subsquare == tile.subsquare):
+                    if curr_tile.entropy.count(value) != 0:
+                        curr_tile.entropy.remove(value)
+   
+
     def resizeImages(self, tile_size: int):
         """
         Create Image objects for each of the 10 images (BLANK, and 1-9),
@@ -100,8 +136,13 @@ class View():
                 temp_label = Label(temp_frame, bg="black")
                 temp_label.place(x=0, y=0)
 
+                # Calculate which subsquare the Tile is in
+                sub_x = column // isqrt(tiles_for_width)
+                sub_y = row // isqrt(tiles_for_width)
+                subsquare_coord = (sub_x, sub_y)
+
                 # Create the Tile object and add to list of Tiles
-                new_tile = Tile(temp_frame, temp_label, tiles_for_width) # tiles_for_width used to initialize entropy
+                new_tile = Tile(temp_frame, temp_label, subsquare_coord, tiles_for_width, column, row) # tiles_for_width used to initialize entropy
                 temp.append(new_tile)
                 y_pos += tile_size
             
