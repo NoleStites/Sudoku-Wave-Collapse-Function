@@ -3,7 +3,7 @@ from PIL import Image, ImageTk  # For resizing images
 from controller.Controller import Controller
 from view.Tile import Tile
 from math import isqrt
-from time import sleep
+import os
 
 class View():
     
@@ -12,7 +12,14 @@ class View():
         Creates a view to be interacted with by the user and
         to display the Sudoku generation results.
         """
+        self.generateSudoku(controller)
 
+
+    def generateSudoku(self, controller: Controller):
+        """
+        Will continue to get called until a Sudoku board is
+        successfully generated (high probability).
+        """
         # Initializing the root window
         self.root = Tk()
         self.root.title("Wave Collapse Function: Sudoku")
@@ -76,8 +83,27 @@ class View():
             self.propagateEntropy(self.tile_grid[x][y], tile_v[1], tiles_for_width)
             tiles_remaining -= 1
 
-
+        # Verify that Sudoku board is completely filled in
+        isFilled = self.verifyFilledBoard()
+        if isFilled == 1:
+            print("\nGeneration Failed: Attempting Again...\n")
+            self.root.destroy()
+            self.generateSudoku(controller)
+        
         self.root.mainloop() # Starts/runs the GUI (everything involving the GUI should come before this)
+
+    def verifyFilledBoard(self):
+        """
+        Checks to see if the Sudoku board is completely filled in.
+        If filled, return 0, otherwise return 1.
+        """
+        size = len(self.tile_grid)
+
+        for column in range(size):
+            for row in range(size):
+                if self.tile_grid[column][row].collapsed == False:
+                    return 1
+        return 0
 
     
     def propagateEntropy(self, tile: Tile, value: int, tiles_for_width: int):

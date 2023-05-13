@@ -35,6 +35,9 @@ class Model():
             if len(tile.entropy) == lowest_entropy:
                 new_valid_tiles.append(tile)
 
+        if len(new_valid_tiles) == 0:
+            return None
+
         return new_valid_tiles
 
 
