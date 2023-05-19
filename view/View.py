@@ -12,24 +12,17 @@ class View():
         Creates a view to be interacted with by the user and
         to display the Sudoku generation results.
         """
-        self.generateSudoku(controller)
+        self.controller = controller
 
-
-    def generateSudoku(self, controller: Controller):
-        """
-        Will continue to get called until a Sudoku board is
-        successfully generated (high probability).
-        """
         # Initializing the root window
         self.root = Tk()
         self.root.title("Wave Collapse Function: Sudoku")
         self.root.configure(background="#404040")
-
-
+        
         # BORROWED CODE (start)
         # Used to center the window so that it doesn't spawn in a random location every time.
         w = 900
-        h = 1000
+        h = 948
 
         ws = self.root.winfo_screenwidth()
         hs = self.root.winfo_screenheight()
@@ -37,38 +30,98 @@ class View():
         x = (ws/2) - (w/2)
         y = (hs/2) - (h/2)
 
-        self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        self.root.geometry('%dx%d+%d+%d' % (w, h, x, y-50))
         # BORROWED CODE (end)
+
+        
+        # Generate a grid of tiles with the width of the grid being tiles_for_width tiles
+        self.tiles_for_width = 9
+        board_size = 900
+        tile_size = board_size // self.tiles_for_width
+
+
+        # Make a frame for the buttons
+        self.button_frame = Frame(self.root, width=200, height=2, bg="blue")
+        self.button_frame.pack()
+
+
+        # Make the Generate, Reset, Gamify, and STOP buttons
+        bg_color = "#262626"
+        fg_color = "white"
+        act_back = "#595959"
+        act_fore = "white"
+
+        button_generate = Button(self.button_frame, width=10, height=2, text="Generate", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateSudoku)
+        button_generate.pack(side=LEFT)
+
+        button_reset = Button(self.button_frame, width=10, height=2, text="Reset", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateEmptyBoard)
+        button_reset.pack(side=LEFT)
+
+        button_gamify = Button(self.button_frame, width=10, height=2, text="Gamify", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.gamify)
+        button_gamify.pack(side=LEFT)
+
+        button_stop = Button(self.button_frame, width=10, height=2, text="Stop", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.root.destroy)
+        button_stop.pack(side=LEFT)
 
 
         # Make the frame for the Sudoku board
-        board_size = 900
         self.sudokuBoard = Frame(self.root, width=board_size, height=board_size, bg="#8c8c8c")
-        self.sudokuBoard.pack(expand=True)
-
-
-        # Generate a grid of tiles with the width of the grid being tiles_for_width tiles
-        tiles_for_width = 9
-        tile_size = board_size // tiles_for_width
-        self.tile_grid = self.populateGrid(tiles_for_width, tile_size) # Initialize grid with empty Tiles
+        self.sudokuBoard.pack()
+        self.tile_grid = self.populateGrid(tile_size) # Initialize grid with empty Tiles
 
 
         # Get a list of resized possible tile images (BLANK and 1-9)
-        image_list = self.resizeImages(tile_size)
+        self.image_list = self.resizeImages(tile_size)
 
-        """        
-        # Testing picture displaying
-        for i in range(9):
-            for j in range(9):
-                tile_grid[i][j].label['image'] = image_list[i+1]
+        # Initialize the Sudoku board as empty
+        self.generateEmptyBoard()
+
+        self.root.mainloop()
+
+
+    def gamify(self):
+        """
+        Will request the controller to choose a random set of
+        51 tiles to make empty to allow the Sudoku puzzle to be playable.
+
+        I can modify this in the future to allow for the number of
+        removed Tiles to be chosen.
+        """
+        # Get list of Tile coordinates to clear
+        clear_list = self.controller.getGamifyTiles(51, self.tile_grid)
+
+        # Clear the tiles in the clear_list
+        for x, y in clear_list:
+            self.tile_grid[x][y].label['image'] = self.image_list[0]
+
+
+    def generateEmptyBoard(self):
+        """
+        Initializes the sudoku board with empty images.
+        """
+        for x in range(self.tiles_for_width):
+            for y in range(self.tiles_for_width):
+                # Set the image of the current Tile to the blank image in our image_list
+                self.tile_grid[x][y].label['image'] = self.image_list[0]
+                self.tile_grid[x][y].entropy = [ num+1 for num in range(self.tiles_for_width)]
+                self.tile_grid[x][y].collapsed = False
+
+
+    def generateSudoku(self):
+        """
+        Will continue to get called until a Sudoku board is
+        successfully generated (high probability).
         """
 
-        tiles_remaining = tiles_for_width * tiles_for_width
+        # Start by clearing the board
+        self.generateEmptyBoard()
+
+        tiles_remaining = self.tiles_for_width * self.tiles_for_width
 
         # Continue this loop until every tile has collapsed
         while tiles_remaining > 0:
             # Get tuple containing random Tile object to populate and value to populate with
-            tile_v = controller.randomTileAndValue(self.tile_grid)
+            tile_v = self.controller.randomTileAndValue(self.tile_grid)
             if tile_v == None:
                 break   # No more uncollapsed Tiles, so the board is filled and the loop can end
 
@@ -77,20 +130,21 @@ class View():
             y = tile_v[0].coord[1]
 
             self.tile_grid[x][y].collapsed = True
-            self.tile_grid[x][y].label['image'] = image_list[tile_v[1]]
+            self.tile_grid[x][y].label['image'] = self.image_list[tile_v[1]]
 
             # Propagate the entropy of affected Tiles
-            self.propagateEntropy(self.tile_grid[x][y], tile_v[1], tiles_for_width)
+            self.propagateEntropy(self.tile_grid[x][y], tile_v[1])
             tiles_remaining -= 1
 
         # Verify that Sudoku board is completely filled in
         isFilled = self.verifyFilledBoard()
         if isFilled == 1:
-            print("\nGeneration Failed: Attempting Again...\n")
-            self.root.destroy()
-            self.generateSudoku(controller)
+            print("\nGeneration Failed: Attempting Again...")
+            self.generateEmptyBoard()
+            self.generateSudoku()
         
         self.root.mainloop() # Starts/runs the GUI (everything involving the GUI should come before this)
+
 
     def verifyFilledBoard(self):
         """
@@ -106,14 +160,14 @@ class View():
         return 0
 
     
-    def propagateEntropy(self, tile: Tile, value: int, tiles_for_width: int):
+    def propagateEntropy(self, tile: Tile, value: int):
         """
         Will change the entropy of Tiles surrounding the given Tile based on
         the given value.
         """
         # Iterate through every Tile in the grid
-        for column in range(tiles_for_width):
-            for row in range(tiles_for_width):
+        for column in range(self.tiles_for_width):
+            for row in range(self.tiles_for_width):
                 curr_tile = self.tile_grid[column][row]
                 if (curr_tile.coord[0] == tile.coord[0]) or (curr_tile.coord[1] == tile.coord[1]) or (curr_tile.subsquare == tile.subsquare):
                     if curr_tile.entropy.count(value) != 0:
@@ -143,17 +197,17 @@ class View():
         return image_list
    
 
-    def populateGrid(self, tiles_for_width: int, tile_size: int):
+    def populateGrid(self, tile_size: int):
         """
         Creates all of the Tile objects to put in the grid and initializes
         them with no image and max entropy. Returns the tile grid list.
         """
         tile_grid = []  # A two-dimensional list to contain the grid of tiles
         x_pos = 0
-        for column in range(tiles_for_width):
+        for column in range(self.tiles_for_width):
             temp = []
             y_pos = 0
-            for row in range(tiles_for_width):
+            for row in range(self.tiles_for_width):
                 # Create a frame object
                 temp_frame = Frame(self.sudokuBoard, width=tile_size, height=tile_size, bg="black", highlightbackground="blue", highlightthickness=1)
                 temp_frame.place(x=x_pos, y=y_pos)
@@ -163,12 +217,12 @@ class View():
                 temp_label.place(x=0, y=0)
 
                 # Calculate which subsquare the Tile is in
-                sub_x = column // isqrt(tiles_for_width)
-                sub_y = row // isqrt(tiles_for_width)
+                sub_x = column // isqrt(self.tiles_for_width)
+                sub_y = row // isqrt(self.tiles_for_width)
                 subsquare_coord = (sub_x, sub_y)
 
                 # Create the Tile object and add to list of Tiles
-                new_tile = Tile(temp_frame, temp_label, subsquare_coord, tiles_for_width, column, row) # tiles_for_width used to initialize entropy
+                new_tile = Tile(temp_frame, temp_label, subsquare_coord, self.tiles_for_width, column, row) # tiles_for_width used to initialize entropy
                 temp.append(new_tile)
                 y_pos += tile_size
             

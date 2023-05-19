@@ -27,3 +27,14 @@ class Controller():
         tile_v = self.model.chooseRandomTileAndValue(valid_tiles)
 
         return tile_v
+
+
+    def getGamifyTiles(self, num_to_remove: int, tile_grid: List[List[Tile]]):
+        """
+        Has the model produce a list of unique Tile coordinates.
+        Returns a list of (x, y) tuples.
+        """
+        # Get list of Tile coords from the model
+        tile_coords = self.model.produceGamifyTiles(num_to_remove, tile_grid)
+
+        return tile_coords

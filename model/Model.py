@@ -50,3 +50,38 @@ class Model():
         random_value = choice(random_tile.entropy)
 
         return (random_tile, random_value)
+
+
+    def produceGamifyTiles(self, num_to_produce: int, tile_grid: List[List[Tile]]):
+        """
+        Chooses a number of random coords in the grid boundaries
+        based on the parameter num_to_produce.
+        Returns a list of (x, y) tuples.
+        """
+        # Produce a list of all tiles
+        all_tiles = []
+
+        grid_length = len(tile_grid)
+        for column in range(grid_length):
+            for row in range(grid_length):
+                all_tiles.append(tile_grid[column][row])
+
+        # Pick num_to_produce Tiles out of the list
+        chosen_tiles = []
+
+        for i in range(num_to_produce):
+            chosen_tile = choice(all_tiles)     # Chose a random tile from the list
+            all_tiles.remove(chosen_tile)       # Remove it from the list so it isn't chosen again
+            chosen_tiles.append(chosen_tile)    # Add chosen tile to list of chosen tiles
+
+        # Create a list of coordinates to be returned
+        coords = []
+
+        for tile in chosen_tiles:
+            coords.append(tile.coord)
+
+        return coords
+
+
+
+
