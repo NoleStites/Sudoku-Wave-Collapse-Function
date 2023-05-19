@@ -6,6 +6,7 @@ from math import isqrt
 import os
 from logger.logger import Logger
 import datetime
+import time
 
 
 class View():
@@ -145,6 +146,10 @@ class View():
             self.tile_grid[x][y].collapsed = True
             self.tile_grid[x][y].label['image'] = self.image_list[tile_v[1]]
 
+            # For animation, wait a small amount of time before moving to the next Tile 
+            time.sleep(0.03)
+            self.root.update()
+
             # Propagate the entropy of affected Tiles
             self.propagateEntropy(self.tile_grid[x][y], tile_v[1])
             tiles_remaining -= 1
@@ -160,7 +165,6 @@ class View():
         self.logger.log(f'Generation Attempts: {self.gen_attempts}\n')
         self.gen_attempts = 1
 
-        self.root.mainloop() # Starts/runs the GUI (everything involving the GUI should come before this)
 
 
     def verifyFilledBoard(self):
