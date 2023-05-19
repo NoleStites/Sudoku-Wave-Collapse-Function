@@ -1,6 +1,6 @@
 from model.Model import Model
 from typing import List
-from view.Tile import Tile
+from tile.Tile import Tile # For type verification
 
 class Controller():
 

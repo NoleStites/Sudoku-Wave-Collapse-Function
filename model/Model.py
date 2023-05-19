@@ -1,4 +1,4 @@
-from view.Tile import Tile
+from tile.Tile import Tile # For type verification
 from typing import List
 from random import choice
 

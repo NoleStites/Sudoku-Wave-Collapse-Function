@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk  # For resizing images
 from controller.Controller import Controller
-from view.Tile import Tile
+from tile.Tile import Tile
 from math import isqrt
 import os
 
@@ -182,14 +182,14 @@ class View():
         image_list = []
 
         # Special case: blank image
-        image = Image.open(f"./tiles/tileBLANK.png")                    # Open the image for editting
+        image = Image.open(f"./tile/tile_images/tileBLANK.png")         # Open the image for editting
         image = image.resize((tile_size, tile_size), Image.ANTIALIAS)   # Resize the image based on the tile size
         image = ImageTk.PhotoImage(image)                               # Convert the image to a PhotoImage (tkinter compatable)
         image_list.append(image)
 
         # Images 1-9
         for num in range(9):
-            image = Image.open(f"./tiles/tile{num+1}.png")
+            image = Image.open(f"./tile/tile_images/tile{num+1}.png")
             image = image.resize((tile_size, tile_size), Image.ANTIALIAS)
             image = ImageTk.PhotoImage(image)
             image_list.append(image)
