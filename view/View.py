@@ -59,11 +59,14 @@ class View():
         button_generate = Button(self.button_frame, width=10, height=2, text="Generate", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateSudoku)
         button_generate.pack(side=LEFT)
 
-        button_reset = Button(self.button_frame, width=10, height=2, text="Reset", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateEmptyBoard)
-        button_reset.pack(side=LEFT)
+        button_animate = Button(self.button_frame, width=10, height=2, text="Animate", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateWithAnimation)
+        button_animate.pack(side=LEFT)
 
         button_gamify = Button(self.button_frame, width=10, height=2, text="Gamify", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.gamify)
         button_gamify.pack(side=LEFT)
+
+        button_reset = Button(self.button_frame, width=10, height=2, text="Reset", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.generateEmptyBoard)
+        button_reset.pack(side=LEFT)
 
         button_stop = Button(self.button_frame, width=10, height=2, text="Stop", bg=bg_color, fg=fg_color, activebackground=act_back, activeforeground=act_fore, command=self.root.destroy)
         button_stop.pack(side=LEFT)
@@ -91,6 +94,16 @@ class View():
 
         # Start the program GUI
         self.root.mainloop()
+
+
+    def generateWithAnimation(self):
+        """
+        A preliminary method between button press and Sudoku generation
+        special for the animation button. Because you cant seem to pass
+        parameters through button commands, this method will be responsible
+        for passing a flag to generateSudoku to allow animation to occur.
+        """
+        self.generateSudoku(animation_flag=1)
 
 
     def gamify(self):
@@ -121,7 +134,7 @@ class View():
                 self.tile_grid[x][y].collapsed = False
 
 
-    def generateSudoku(self):
+    def generateSudoku(self, animation_flag=0):
         """
         Will continue to get called until a Sudoku board is
         successfully generated (high probability).
@@ -146,19 +159,20 @@ class View():
             self.tile_grid[x][y].collapsed = True
             self.tile_grid[x][y].label['image'] = self.image_list[tile_v[1]]
 
-            # For animation, wait a small amount of time before moving to the next Tile 
-            time.sleep(0.03)
-            self.root.update()
-
             # Propagate the entropy of affected Tiles
             self.propagateEntropy(self.tile_grid[x][y], tile_v[1])
             tiles_remaining -= 1
+            
+            # For animation, wait a small amount of time before moving to the next Tile
+            if animation_flag == 1: # Perform animation
+                time.sleep(0.03)
+                self.root.update()
 
         # Verify that Sudoku board is completely filled in
         isFilled = self.verifyFilledBoard()
         if isFilled == 1: # Not filled
             self.gen_attempts += 1
-            self.generateSudoku()
+            self.generateSudoku(animation_flag)
         
 
         # Log generation attempts to the log file and reset counter for next generation
