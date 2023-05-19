@@ -1,12 +1,12 @@
-from tkinter import *
-from PIL import Image, ImageTk  # For resizing images
 from controller.Controller import Controller
-from tile.Tile import Tile
-from math import isqrt
-import os
 from logger.logger import Logger
-import datetime
-import time
+from PIL import Image, ImageTk  # For resizing images
+from tile.Tile import Tile
+from math import isqrt          # For the square root function
+from tkinter import *
+import datetime                 # For getting the date and time for the logs
+import time                     # For delaying in order to achieve animation
+import os                       # For getting the dimensions of the user's screen
 
 
 class View():
@@ -24,6 +24,7 @@ class View():
         self.root.title("Wave Collapse Function: Sudoku")
         self.root.configure(background="#404040")
         
+
         # BORROWED CODE (start)
         # Used to center the window so that it doesn't spawn in a random location every time.
         w = 900
@@ -50,7 +51,7 @@ class View():
         self.button_frame.pack()
 
 
-        # Make the Generate, Reset, Gamify, and STOP buttons
+        # Make the Generate, Animate, Gamify, Reset, and Stop buttons
         bg_color = "#262626"
         fg_color = "white"
         act_back = "#595959"
