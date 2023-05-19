@@ -4,6 +4,9 @@ from controller.Controller import Controller
 from tile.Tile import Tile
 from math import isqrt
 import os
+from logger.logger import Logger
+import datetime
+
 
 class View():
     
@@ -13,6 +16,7 @@ class View():
         to display the Sudoku generation results.
         """
         self.controller = controller
+        self.logger = Logger("./log.txt")
 
         # Initializing the root window
         self.root = Tk()
@@ -76,6 +80,15 @@ class View():
         # Initialize the Sudoku board as empty
         self.generateEmptyBoard()
 
+        # Counter to keep track of how many generation attempts occured before success (for logging purposes)
+        self.gen_attempts = 1
+
+        # Initialize log file for this program run
+        date = datetime.datetime.now()
+        self.logger.log(f'\n\n{date.strftime("%c")}\n')
+        self.logger.log("----------------------\n")
+
+        # Start the program GUI
         self.root.mainloop()
 
 
@@ -138,11 +151,15 @@ class View():
 
         # Verify that Sudoku board is completely filled in
         isFilled = self.verifyFilledBoard()
-        if isFilled == 1:
-            print("\nGeneration Failed: Attempting Again...")
-            self.generateEmptyBoard()
+        if isFilled == 1: # Not filled
+            self.gen_attempts += 1
             self.generateSudoku()
         
+
+        # Log generation attempts to the log file and reset counter for next generation
+        self.logger.log(f'Generation Attempts: {self.gen_attempts}\n')
+        self.gen_attempts = 1
+
         self.root.mainloop() # Starts/runs the GUI (everything involving the GUI should come before this)
 
 
