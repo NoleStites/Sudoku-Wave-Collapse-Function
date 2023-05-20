@@ -2,6 +2,7 @@
 import unittest
 from tests.fakeTile import FakeTile
 from model.Model import Model
+from logger.logger import Logger
 
 """
 I had some difficulties finding methods within my program to test because
@@ -47,7 +48,17 @@ class TestMVC(unittest.TestCase):
         for tile in results:
             self.assertEqual(tile.collapsed, False)
             self.assertEqual(len(tile.entropy), 1)
+    
 
+    def test_singletonLogger(self):
+        """
+        Tests if the singleton implementation of the Logger works properly.
+        """
+        # Make the first Logger
+        logger1 = Logger("test1.txt")
+
+        # Ensure that the second Logger raises an exception
+        self.assertRaises(Exception, Logger, "test2.txt")
     
 
 
