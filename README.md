@@ -2,7 +2,7 @@
 
 > My project proposal suggested that I was going to make a database; however, as I informed you, I chose this project instead.
 
-### Description
+## Description
 What exactly is a wave collapse function?<br>
 <br>
 The best way to answer this is by using an example: a Sudoku board. Imagine an empty Sudoku board; it has 81 spaces, or tiles, and each tile has the option to store one of the numbers 1-9; this is called a tile's entropy or, in other words, the amount of options for a given tile in a grid. So, in the initial state, each tile has an entropy of 9 because each tile has 9 options of what can be stored there.<br>
@@ -15,16 +15,16 @@ This loop continues until either all tiles have been assigned a value or the til
 <br>
 Wave collapse functions don't only apply to Sudoku; dungeons and terrain in games benefit from this too! Have you ever played a game like Minecraft where the terrain is different every time you load a new game? Or perhaps you are a dungeon crawler where the dungeon changes every time you go to it with new arrangements or rooms and treasure. These can all be generated using the wave collapse function! The ruleset and tiles are the key.
 
-### Project Structure
+## Project Structure
 More info here.
 
-### Design Patterns
+## Design Patterns
 More info here.
 
-### Unittests
+## Unittests
 More info here.
 
-### Setup Instructions
+## Setup Instructions
 1. Clone the repository   
 `$ git clone https://github.com/SOUComputerScience/final_project-NoleStites.git`
 2. Change directories into the repo    
