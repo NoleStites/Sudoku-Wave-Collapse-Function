@@ -9,7 +9,7 @@ The best way to answer this is by using an example: a Sudoku board. Imagine an e
 <br>
 Now Sudoku has rules of course, so if I assign a 1 to any given tile, then I can't go and assign a 1 to any tile in its row, column, or subsquare. You will find that all wave collapse functions rely on a set of rules to follow in order to determine which values can be adjacent to other values; in our case, we follow the rules of sudoku.<br>
 <br>
-A wave collapse function will always start as an empty board with every tile having all of the options (max entropy). The function will then repeatedly choose the tile with the least entropy (i.e the tile with the most value restrictions) and assign a value to it. After assigning a value to a tile, the entropy of adjacent tiles might be affected depending on the ruleset, so the next step would be to adjust the entropy of affected tiles accordingly.
+A wave collapse function will always start as an empty board with every tile having all of the options (max entropy). The function will then repeatedly choose the tile with the least entropy (i.e the tile with the most value restrictions) and assign a value to it. After assigning a value to a tile, the entropy of adjacent tiles might be affected depending on the ruleset, so the next step would be to adjust the entropy of affected tiles accordingly.<br>
 <br>
 This loop continues until either all tiles have been assigned a value or the tiles remaining have no entropy (cannot be any value), meaning that the wave collapse function failed to generate a valid tile arrangement. It is totally fine if this happens; randomization is unpredictable and, in some cases, generates a broken grid. If it does, simply regenerate a new board.<br>
 <br>
