@@ -1,6 +1,6 @@
 # Final Project: Wave Collapse Function
 
-> My project proposal suggested I was going to make a database, however, as I informed you, I chose this project instead.
+> My project proposal suggested that I was going to make a database, however, as I informed you, I chose this project instead.
 
 ### Description
 What exactly is a wave collapse function?<br>
