@@ -23,23 +23,29 @@ Considering that a big part of a wave collapse function are the tiles in the gri
 As mentioned in the Description section, it is sometimes the case that the board needs to be generated multiple times before a valid one is returned; this is data that interested me quite a bit. I thought it might be handy to know just how many generation attempts were required, so I made a logger to log that for me. The logger has its own package for organization and reusability between projects.
 
 ## Design Patterns
+
+### MVC
+I don't even know if this is considered a design pattern, but it at least deserves an honourable mention. I used MVC as way to organization the major parts
+are my program. I know how complicated a GUI can be to implement, so separating the code into a View for the things to display, a Model as a place to make he more complicated calculation, and a Controller to allow communication between the two was a great way to go. Doing this also allows for isolation between different key components of the program, making debugging a lot easier.
+
 ### Single Responsibility
-Stuff
+Despite organizing my program using MVC, I still ran into issues with cluttered code. The View, specifically, can be quite complicated with all of the frames and buttons that might need to be implemented; code start to get long after a short while. After I noticed this, I decided to cut my View initializer into more organized piece through the use of additional methods in the View class. Originally, my View's initializer was doing a few rather large things, so I took these tasks and put them in their own methods. Not only did this enforce bettwe isolation but it also made my code significantly more readable.
 
 ### Singleton
-Stuff
+I implemented a logger responsible for recording data about the number of generation attempts spent on making a board. As I have learned with loggers in general, it is a good idea to make your logger object a Singleton as to avoid two loggers writing to a single file at the same time. I especially wanted to make my logger with a Singleton design because it was important to me that my data not be corrupted.
 
-Facade
-: Stuff
+### Facade
+Facades are quite useful in that they take something complicated and abstract it away, providing you with a user-friendly interface to interact with the complexity of what lies beneath. My code is large, complicated, and perhaps a bit confusing to look at. Someone looking at it might think "where do I even start?" Well this is no more! By using a friendly GUI interface, the user can simply interact with any one of five buttons I have on display. Each button does a ton of stuff behind the scenes, but that is all abstracted away into a few buttons. My GUI is a facade between the user and my complex code.
 
-Flyweight
-: Stuff
-
-MVC
-: Stuff
+### Flyweight
+This is perhaps the most exciting design pattern I used. Perhaps let's start with a preface: each Sudoku board has 81 squares; this might be considered a lot, or maybe not, but my program was crafted in such a manner as to allow for expansion of the board. I tested on a board size of 16,900 squares and having that many squares is definitely possible. Beyond the number of squares, consider that each square would have to contain an entire Python object, each object having an image stored in it; that's a lot of images! I have images for the numbers 1-9 so that they can be displayed on the board, but what I have done is implement the Flyweight pattern such that I have a list with nine objects representing the nine images I have. Now each square, rather than having their own object and image, share a single object in my Flyweight list. This way there would only be 9 objects in the board, not 16,900.
 
 ## Unittests
-More info here.
+So, about the unittests: it was hard to find methods to test. Every one of the methods in my program are either to attached to the tkinter library to test or involve generating and returning random things, which is practically impossible to test. I managed to find a couple things to test, however, so I hope that can be enough. I completely understand if it isn't, of course.<br>
+<br>
+The first method I tested is my Model's method for finding and returning a list of tiles that are both uncollapsed (i.e haven't been assigned a value) and have the lowest entropy. This is a major part of my program as this method is called every time through my while loop until every tile has a value.<br>
+<br>
+The second, and final, thing that I tested was my logger implementation. I wanted to verify that my logger's Singleton design acted properly and did not allow more than one instance of a Logger object at a time. Unlike my Singleton logger test in the Singleton lab, I have implemented a thread-safe version.
 
 ## Setup Instructions
 1. Clone the repository   
