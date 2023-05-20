@@ -16,10 +16,27 @@ This loop continues until either all tiles have been assigned a value or the til
 Wave collapse functions don't only apply to Sudoku; dungeons and terrain in games benefit from this too! Have you ever played a game like Minecraft where the terrain is different every time you load a new game? Or perhaps you are a dungeon crawler where the dungeon changes every time you go to it with new arrangements or rooms and treasure. These can all be generated using the wave collapse function! The ruleset and tiles are the key.
 
 ## Project Structure
-More info here.
+My Sudoku generation algorithm is displayed and written to fit into an MVC application. I have separate packages for the Model, View, and Controller such that the View, when needing to make calculation, will send a request to the Controller, which then forwards the request to the Model to return the calculation result. Because of this layout, the View is only responsible for, well, the view; it onyl needs to concern itself with the GUI. The Controller is the middle-man and acts as the messenger between View and Model. The Model is solely responsible for making complication calculations and giving the results to the View when requested.<br>
+<br>
+Considering that a big part of a wave collapse function are the tiles in the grid I chose to make them their own package. This package contains the Tile object and a directory filled with all of the images display on the Sudoku board (the red numbers).<br>
+<br>
+As mentioned in the Description section, it is sometimes the case that the board needs to be generated multiple times before a valid one is returned; this is data that interested me quite a bit. I thought it might be handy to know just how many generation attempts were required, so I made a logger to log that for me. The logger has its own package for organization and reusability between projects.
 
 ## Design Patterns
-More info here.
+Single Responsibility
+: Stuff
+
+Singleton
+: Stuff
+
+Facade
+: Stuff
+
+Flyweight
+: Stuff
+
+MVC
+: Stuff
 
 ## Unittests
 More info here.
