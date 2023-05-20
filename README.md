@@ -4,7 +4,7 @@
 
 ### Description
 What exactly is a wave collapse function?<br>
-<br?
+<br>
 The best way to answer this is by using an example: a Sudoku board. Imagine an empty Sudoku board; it has 81 spaces, or tiles, and each tile has the option to store one of the numbers 1-9; this is called a tile's entropy or, in other words, the amount of options for a given tile in a grid. So, in the initial state, each tile has an entropy of 9 because each tile has 9 options of what can be stored there.<br>
 <br>
 Now Sudoku has rules of course, so if I assign a 1 to any given tile, then I can't go and assign a 1 to any tile in its row, column, or subsquare. You will find that all wave collapse functions rely on a set of rules to follow in order to determine which values can be adjacent to other values; in our case, we follow the rules of sudoku.<br>
