@@ -12,4 +12,8 @@ More info here.
 `$ python -m venv env`   
 `$ source env/bin/activate`     
 4. Install the required packages     
-`$ pip install -r requirements.txt`     
+`$ pip install -r requirements.txt` 
+5. Run the app!    
+`$ python3 app.py`   
+6. Run the unittests    
+`$ python -m unittest tests/test_Unit.py`   
