@@ -65,6 +65,6 @@ The second, and final, thing that I tested was my logger implementation. I wante
 GUI Buttons:
 - **Generate**: generates a filled Sudoku board instantly
 - **Animate**:  generates a filled Sudoku board by animating how the wave collapse function works
-- **Gamify**:   turns a filled Sudoku board into a playable Sudoku by removing 51 squares
+- **Gamify**:   turns a filled Sudoku board into a playable Sudoku by clearing 51 squares
 - **Reset**:    clears the Sudoku board
 - **Stop**:     terminates the program
