@@ -1,12 +1,12 @@
 from controller.Controller import Controller
 from logger.logger import Logger
-from PIL import Image, ImageTk  # For resizing images
 from tile.Tile import Tile
 from math import isqrt          # For the square root function
 from tkinter import *
 import datetime                 # For getting the date and time for the logs
 import time                     # For delaying in order to achieve animation
 import os                       # For getting the dimensions of the user's screen
+from PIL import Image, ImageTk  # For resizing images
 
 
 class View():

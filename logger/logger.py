@@ -1,5 +1,28 @@
 
-class Logger():
+from threading import Lock, Thread
+
+
+class LoggerMeta(type):
+    """
+    This is a thread-safe implementation of a Singleton Logger. 
+    Taken from the example code in the Logger lab due to its complexity.
+    """
+    _instances = {}
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        with cls._lock:
+            # The first thread to acquire the lock creates 
+            # Singleton instance
+            # Other threads cannot access until lock is realesed
+            # They won't create new object
+            if cls not in cls._instances:
+                instance = super().__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class Logger(metaclass=LoggerMeta):
     """
     This class is used to log any desired content to a given file.
     """
