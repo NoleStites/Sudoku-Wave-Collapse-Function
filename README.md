@@ -23,11 +23,11 @@ Considering that a big part of a wave collapse function are the tiles in the gri
 As mentioned in the Description section, it is sometimes the case that the board needs to be generated multiple times before a valid one is returned; this is data that interested me quite a bit. I thought it might be handy to know just how many generation attempts were required, so I made a logger to log that for me. The logger has its own package for organization and reusability between projects.
 
 ## Design Patterns
-Single Responsibility
-: Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff Stuff 
+### Single Responsibility
+Stuff
 
-Singleton
-: Stuff
+### Singleton
+Stuff
 
 Facade
 : Stuff
