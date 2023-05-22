@@ -58,7 +58,8 @@ The second, and final, thing that I tested was my logger implementation. I wante
 4. Install the required packages     
 `$ pip install -r requirements.txt` 
 5. Run the app!    
-`$ python3 app.py`   
+`$ python3 app.py`
+> My program allows for board sizes beyond the standard 9x9 Sudoku board. When running the 25x25, it takes 950+ generation attempts and Python will through a recursion depth error, so be warned; run it on the animation for the most entertaining results. This is a place for optimization in the future.
 6. Run the unittests    
 `$ python -m unittest tests/test_Unit.py`   
 
