@@ -1,7 +1,7 @@
 from controller.Controller import Controller
 from logger.logger import Logger
 from tile.Tile import Tile
-from math import isqrt          # For the square root function
+from math import isqrt, floor   # For the square root and floor functions
 from tkinter import *
 import datetime                 # For getting the date and time for the logs
 import time                     # For delaying in order to achieve animation
@@ -18,6 +18,27 @@ class View():
         """
         self.controller = controller
         self.logger = Logger("./log.txt")
+        print("\nChoose your Sudoku size:")
+        print("- 4x4   (enter \'4\')")
+        print("- 9x9   (enter \'9\')   (STANDARD)")
+        print("- 16x16 (enter \'16\')")
+        print("- 25x25 (enter \'25\')  (~43 SEC DEPTH ERROR)")
+        self.tiles_for_width = int(input("\nChoice: "))
+        print()
+
+        # Verify that input if valid
+        if self.tiles_for_width not in [4, 9, 16, 25]:
+            raise Exception("Invalid Board Size!")
+
+        # Determine ideal animation speed
+        if self.tiles_for_width == 4:
+            self.animation_speed = 0.1
+        elif self.tiles_for_width == 9:
+            self.animation_speed = 0.03
+        elif self.tiles_for_width == 16:
+            self.animation_speed = 0.009
+        elif self.tiles_for_width == 25:
+            self.animation_speed = 0.003
 
         # Initializing the root window
         self.root = Tk()
@@ -41,7 +62,6 @@ class View():
 
         
         # Generate a grid of tiles with the width of the grid being tiles_for_width tiles
-        self.tiles_for_width = 9
         board_size = 900
         tile_size = board_size // self.tiles_for_width
 
@@ -110,13 +130,18 @@ class View():
     def gamify(self):
         """
         Will request the controller to choose a random set of
-        51 tiles to make empty to allow the Sudoku puzzle to be playable.
+        tiles equivalent to 63% of the total number of tiles 
+        to make empty to allow the Sudoku puzzle to be playable.
 
         I can modify this in the future to allow for the number of
-        removed Tiles to be chosen.
+        removed Tiles to be chosen based on difficulty.
         """
+        # Determine how many tiles is 63% of total tiles (ideal for good game)
+        total_tiles = self.tiles_for_width * self.tiles_for_width
+        num_tiles_to_remove = floor(total_tiles * 0.63)
+
         # Get list of Tile coordinates to clear
-        clear_list = self.controller.getGamifyTiles(51, self.tile_grid)
+        clear_list = self.controller.getGamifyTiles(num_tiles_to_remove, self.tile_grid)
 
         # Clear the tiles in the clear_list
         for x, y in clear_list:
@@ -135,7 +160,7 @@ class View():
                 self.tile_grid[x][y].collapsed = False
 
 
-    def generateSudoku(self, animation_flag=0):
+    def generateSudoku(self, animation_flag=0, recursion_depth=1):
         """
         Will continue to get called until a Sudoku board is
         successfully generated (high probability).
@@ -144,10 +169,10 @@ class View():
         # Start by clearing the board
         self.generateEmptyBoard()
 
-        tiles_remaining = self.tiles_for_width * self.tiles_for_width
 
         # Continue this loop until every tile has collapsed
-        while tiles_remaining > 0:
+        while True:
+
             # Get tuple containing random Tile object to populate and value to populate with
             tile_v = self.controller.randomTileAndValue(self.tile_grid)
             if tile_v == None:
@@ -162,23 +187,44 @@ class View():
 
             # Propagate the entropy of affected Tiles
             self.propagateEntropy(self.tile_grid[x][y], tile_v[1])
-            tiles_remaining -= 1
             
             # For animation, wait a small amount of time before moving to the next Tile
             if animation_flag == 1: # Perform animation
-                time.sleep(0.03)
+                time.sleep(self.animation_speed)
                 self.root.update()
+
+            # Start a new generation attempt if a tile has zero entropy
+            if self.searchZeroEntropy() == 1:
+                break
 
         # Verify that Sudoku board is completely filled in
         isFilled = self.verifyFilledBoard()
         if isFilled == 1: # Not filled
             self.gen_attempts += 1
-            self.generateSudoku(animation_flag)
+            new_recursion = recursion_depth + 1
+            if self.gen_attempts % 50 == 0:
+                self.logger.log(f'Generation Attempts: {self.gen_attempts}\n')
+            self.generateSudoku(animation_flag, new_recursion)
         
 
         # Log generation attempts to the log file and reset counter for next generation
-        self.logger.log(f'Generation Attempts: {self.gen_attempts}\n')
-        self.gen_attempts = 1
+        if recursion_depth == 1:
+            self.logger.log(f'Generation Attempts: {self.gen_attempts}\n')
+            self.gen_attempts = 1
+
+    
+    def searchZeroEntropy(self):
+        """
+        Searches the board to see if any Tile has zero entropy.
+        If so, return 1, else return 0.
+        """
+        size = len(self.tile_grid)
+
+        for column in range(size):
+            for row in range(size):
+                if (len(self.tile_grid[column][row].entropy) == 0) and (self.tile_grid[column][row].collapsed == False):
+                    return 1
+        return 0
 
 
 
@@ -224,7 +270,7 @@ class View():
         image_list.append(image)
 
         # Images 1-9
-        for num in range(9):
+        for num in range(self.tiles_for_width):
             image = Image.open(f"./tile/tile_images/tile{num+1}.png")
             image = image.resize((tile_size, tile_size), Image.ANTIALIAS)
             image = ImageTk.PhotoImage(image)
