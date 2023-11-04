@@ -1,4 +1,6 @@
-# Sudoku Wave Collapse Function
+# Final Project: Wave Collapse Function
+
+> My project proposal suggested that I was going to make a database; however, as I informed you, I chose this project instead.
 
 ## Description
 What exactly is a wave collapse function?<br>
@@ -11,14 +13,14 @@ A wave collapse function will always start as an empty board with every tile hav
 <br>
 This loop continues until either all tiles have been assigned a value or the tiles remaining have no entropy (cannot be any value), meaning that the wave collapse function failed to generate a valid tile arrangement. It is totally fine if this happens; randomization is unpredictable and, in some cases, generates a broken grid. If it does, simply regenerate a new board.<br>
 <br>
-Wave collapse functions don't only apply to Sudoku; dungeons and terrain in games benefit from this too! Have you ever played a game like Minecraft where the terrain is different every time you load a new game? Or perhaps you are a dungeon crawler where the dungeon changes every time you go to it with new arrangements of rooms and treasure. These can all be generated using the wave collapse function! The ruleset and tiles are the key.
+Wave collapse functions don't only apply to Sudoku; dungeons and terrain in games benefit from this too! Have you ever played a game like Minecraft where the terrain is different every time you load a new game? Or perhaps you are a dungeon crawler where the dungeon changes every time you go to it with new arrangements or rooms and treasure. These can all be generated using the wave collapse function! The ruleset and tiles are the key.
 
 ## Project Structure
-My Sudoku generation algorithm is displayed and written to fit into an MVC application. I have separate packages for the Model, View, and Controller such that the View, when needing to make calculation, will send a request to the Controller, which then forwards the request to the Model to return the calculation result. Because of this layout, the View is only responsible for, well, the view; it onyl needs to concern itself with the GUI. The Controller is the middle-man and acts as the messenger between View and Model. The Model is solely responsible for making complication calculations and giving the results to the View when requested.<br>
+My Sudoku generation algorithm is displayed and written to fit into an MVC application. I have separate packages for the Model, View, and Controller such that the View, when needing to make calculation, will send a request to the Controller, which then forwards the request to the Model to return the calculation result. Because of this layout, the View is only responsible for, well, the view; it only needs to concern itself with the GUI. The Controller is the middle-man and acts as the messenger between View and Model. The Model is solely responsible for making complication calculations and giving the results to the View when requested.<br>
 <br>
 Considering that a big part of a wave collapse function are the tiles in the grid I chose to make them their own package. This package contains the Tile object and a directory filled with all of the images display on the Sudoku board (the red numbers).<br>
 <br>
-As mentioned in the Description section, it is sometimes the case that the board needs to be generated multiple times before a valid one is returned; this is data that interested me quite a bit. I thought it might be handy to know just how many generation attempts were required, so I made a logger to log that for me. The logger has its own package for organization and reusability between projects.
+As mentioned in the Description section, it is sometimes the case that the board needs to be generated multiple times before a valid one is returned; this is true for most cases but in my implementation, I only have one generation. I can manage this because when a board fails to generate, I use backtracking to get back to a state that needs changing, then press forward with renewed ambition. I found it handy during my testing to print out a list of all of the Tiles' entropies, so I made a logger to log that for me. The logger has its own package for organization and reusability between projects.
 
 ## Design Patterns
 
@@ -30,13 +32,16 @@ are my program. I know how complicated a GUI can be to implement, so separating 
 Despite organizing my program using MVC, I still ran into issues with cluttered code. The View, specifically, can be quite complicated with all of the frames and buttons that might need to be implemented; code start to get long after a short while. After I noticed this, I decided to cut my View initializer into more organized piece through the use of additional methods in the View class. Originally, my View's initializer was doing a few rather large things, so I took these tasks and put them in their own methods. Not only did this enforce bettwe isolation but it also made my code significantly more readable.
 
 ### Singleton
-I implemented a logger responsible for recording data about the number of generation attempts spent on making a board. As I have learned with loggers in general, it is a good idea to make your logger object a Singleton as to avoid two loggers writing to a single file at the same time. I especially wanted to make my logger with a Singleton design because it was important to me that my data not be corrupted.
+I implemented a logger responsible for recording data about entropy counts within a board. As I have learned with loggers in general, it is a good idea to make your logger object a Singleton as to avoid two loggers writing to a single file at the same time. I especially wanted to make my logger with a Singleton design because it was important to me that my data not be corrupted.
 
 ### Facade
 Facades are quite useful in that they take something complicated and abstract it away, providing you with a user-friendly interface to interact with the complexity of what lies beneath. My code is large, complicated, and perhaps a bit confusing to look at. Someone looking at it might think "where do I even start?" Well this is no more! By using a friendly GUI interface, the user can simply interact with any one of five buttons I have on display. Each button does a ton of stuff behind the scenes, but that is all abstracted away into a few buttons. My GUI is a facade between the user and my complex code.
 
 ### Flyweight
 This is perhaps the most exciting design pattern I used. Perhaps let's start with a preface: each Sudoku board has 81 squares; this might be considered a lot, or maybe not, but my program was crafted in such a manner as to allow for expansion of the board. I tested on a board size of 16,900 squares and having that many squares is definitely possible. Beyond the number of squares, consider that each square would have to contain an entire Python object, each object having an image stored in it; that's a lot of images! I have images for the numbers 1-9 so that they can be displayed on the board, but what I have done is implement the Flyweight pattern such that I have a list with nine objects representing the nine images I have. Now each square, rather than having their own object and image, share a single object in my Flyweight list. This way there would only be 9 objects in the board, not 16,900.
+
+### Snapshot
+Now this one may be considered a stretch, but I was certainly inspired by the snapshot design pattern. I came back to my project over several weeks, making improvements where I found it necessary; one such improvement was to my original backtracking algorithm. I realized that I didn't fully understand what my own backtracking algorithm was doing, so I thought it right to throw that algorithm away and reimplement it in the form of a snapshot. I created a snapshot package and object that stores the most recent change on the board. I create a snapshot after every Tile is collapsed and store it in a stack; this way I can backtrack by popping a snapshot off of the stack and viewing it's contents to determine how to reverse the board to it's previous state. The reason why I think it may be considered a stretch to call this a snapshot design is because I never implemented any methods for the actual snapshot object. I could have, of course, but I found something that worked for me.
 
 ## Unittests
 So, about the unittests: it was hard to find methods to test. Every one of the methods in my program is either too attached to the tkinter library to test or involves generating and returning random things, which is practically impossible to test. I managed to find a couple things to test, however, so I hope that can be enough. I completely understand if it isn't, of course.<br>
@@ -51,18 +56,21 @@ The second, and final, thing that I tested was my logger implementation. I wante
 2. Change directories into the repo    
 `$ cd final_project-NoleStites` 
 3. Create a Python virtual environment    
-`$ python -m venv env`   
+`$ python3 -m venv env`   
 `$ source env/bin/activate`     
 4. Install the required packages     
 `$ pip install -r requirements.txt` 
 5. Run the app!    
 `$ python3 app.py`
+> My program allows for board sizes beyond the standard 9x9 Sudoku board. When running the 25x25, it may take a while; this is due to backtracking. If it takes too long, feel free to hard-stop the program and try again. Some attempts are more favourable than others.
 6. Run the unittests    
 `$ python -m unittest tests/test_Unit.py`   
 
 GUI Buttons:
 - **Generate**: generates a filled Sudoku board instantly
 - **Animate**:  generates a filled Sudoku board by animating how the wave collapse function works
-- **Gamify**:   turns a filled Sudoku board into a playable Sudoku by clearing 51 squares
+- **Step Generate**: begins a board generation that will allow the user to manual go step-by-step through the generation
+- **Next Step**: after pressing "Step Generate", this button will continue the generation by one step 
+- **Gamify**:   turns a filled Sudoku board into a playable Sudoku by clearing 63% of all tiles
 - **Reset**:    clears the Sudoku board
 - **Stop**:     terminates the program

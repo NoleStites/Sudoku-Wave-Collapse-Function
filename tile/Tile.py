@@ -12,3 +12,4 @@ class Tile():
         self.entropy = [ num+1 for num in range(tiles) ]    # Numbers that are allowed to go in the given Tile
         self.collapsed = False
         self.coord = (x, y)
+        self.value = None
