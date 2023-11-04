@@ -503,14 +503,14 @@ class View():
 
         # Special case: blank image
         image = Image.open(f"./tile/tile_images/tileBLANK.png")         # Open the image for editting
-        image = image.resize((tile_size, tile_size), Image.ANTIALIAS)   # Resize the image based on the tile size
+        image = image.resize((tile_size, tile_size), Image.LANCZOS)   # Resize the image based on the tile size
         image = ImageTk.PhotoImage(image)                               # Convert the image to a PhotoImage (tkinter compatable)
         image_list.append(image)
 
         # Images 1-9
         for num in range(self.tiles_for_width):
             image = Image.open(f"./tile/tile_images/tile{num+1}.png")
-            image = image.resize((tile_size, tile_size), Image.ANTIALIAS)
+            image = image.resize((tile_size, tile_size), Image.LANCZOS)
             image = ImageTk.PhotoImage(image)
             image_list.append(image)
 

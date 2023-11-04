@@ -52,9 +52,9 @@ The second, and final, thing that I tested was my logger implementation. I wante
 
 ## Setup Instructions
 1. Clone the repository   
-`$ git clone https://github.com/SOUComputerScience/final_project-NoleStites.git`
+`$ git clone https://github.com/NoleStites/Sudoku-Wave-Collapse-Function.git`
 2. Change directories into the repo    
-`$ cd final_project-NoleStites` 
+`$ cd Sudoku-Wave-Collapse-Function` 
 3. Create a Python virtual environment    
 `$ python3 -m venv env`   
 `$ source env/bin/activate`     
