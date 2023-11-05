@@ -1,6 +1,4 @@
-# Final Project: Wave Collapse Function
-
-> My project proposal suggested that I was going to make a database; however, as I informed you, I chose this project instead.
+# Wave Collapse Function for Sudoku Generation
 
 ## Description
 What exactly is a wave collapse function?<br>
